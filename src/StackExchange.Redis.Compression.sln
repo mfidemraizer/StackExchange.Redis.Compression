@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Redis.Compression", "StackExchange.Redis.Compression\StackExchange.Redis.Compression.csproj", "{5E75ABDA-B9EB-4714-BD46-8E2717E9702C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackExchange.Redis.Compression.Test", "StackExchange.Redis.Compression.Test\StackExchange.Redis.Compression.Test.csproj", "{7A5A5666-780B-4044-8C72-1F2DC7182F27}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E75ABDA-B9EB-4714-BD46-8E2717E9702C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E75ABDA-B9EB-4714-BD46-8E2717E9702C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E75ABDA-B9EB-4714-BD46-8E2717E9702C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E75ABDA-B9EB-4714-BD46-8E2717E9702C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A5A5666-780B-4044-8C72-1F2DC7182F27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A5A5666-780B-4044-8C72-1F2DC7182F27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A5A5666-780B-4044-8C72-1F2DC7182F27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A5A5666-780B-4044-8C72-1F2DC7182F27}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
