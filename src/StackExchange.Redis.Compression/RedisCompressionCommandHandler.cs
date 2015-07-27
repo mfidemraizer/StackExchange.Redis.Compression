@@ -1,7 +1,9 @@
 ﻿namespace StackExchange.Redis.Compression
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
 
     public class RedisCompressionCommandHandler : IRedisCommandHandler
@@ -67,17 +69,30 @@
         {
             if (CanBeExecuted(involvedKeys))
             {
-                if (result != null)
+                if (result != null && result.GetType() != typeof(bool) && result.GetType() != typeof(int) && result.GetType() != typeof(long))
                 {
+                    bool isScanResult = command == RedisCommand.SCAN || command == RedisCommand.HSCAN || command == RedisCommand.SSCAN || command == RedisCommand.ZSCAN;
+                    object scanValues = null;
+
+                    if (isScanResult)
+                        scanValues = result.GetType()
+                                            .GetField("Values", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+                                            .GetValue(result);
+
                     if (result.GetType() == typeof(RedisValue))
                     {
                         byte[] valueBlob = (RedisValue)result;
                         RedisValueCompressor.Compressor.Decompress(ref valueBlob);
                         result = (RedisValue)Encoding.UTF8.GetString(valueBlob);
                     }
-                    else if (result.GetType() == typeof(RedisValue[]))
+                    else if (result.GetType() == typeof(RedisValue[]) || (command == RedisCommand.SCAN || command == RedisCommand.SSCAN))
                     {
-                        RedisValue[] values = (RedisValue[])result;
+                        RedisValue[] values;
+
+                        if (!isScanResult)
+                            values = (RedisValue[])result;
+                        else
+                            values = (RedisValue[])scanValues;
 
                         for (int i = 0; i < values.Length; i++)
                         {
@@ -85,8 +100,6 @@
                             RedisValueCompressor.Compressor.Decompress(ref valueBlob);
                             values[i] = valueBlob;
                         }
-
-                        result = values;
                     }
                     else if (result.GetType() == typeof(SortedSetEntry))
                     {
@@ -95,9 +108,14 @@
                         RedisValueCompressor.Compressor.Decompress(ref valueBlob);
                         result = new SortedSetEntry((RedisValue)valueBlob, source.Score);
                     }
-                    else if (result.GetType() != typeof(SortedSetEntry[]))
+                    else if (result.GetType() == typeof(SortedSetEntry[]) || command == RedisCommand.ZSCAN)
                     {
-                        SortedSetEntry[] entries = (SortedSetEntry[])result;
+                        SortedSetEntry[] entries;
+
+                        if (!isScanResult)
+                            entries = (SortedSetEntry[])result;
+                        else
+                            entries = (SortedSetEntry[])scanValues;
 
                         for (int i = 0; i < entries.Length; i += 2)
                         {
@@ -115,16 +133,23 @@
                         RedisValueCompressor.Compressor.Decompress(ref valueBlob);
                         result = new HashEntry(source.Name, (RedisValue)valueBlob);
                     }
-                    else if (result.GetType() == typeof(HashEntry[]))
+                    else if (result.GetType() == typeof(HashEntry[]) || command == RedisCommand.HSCAN)
                     {
-                        HashEntry[] entries = (HashEntry[])result;
+                        HashEntry[] entries;
+
+                        if (!isScanResult)
+                            entries = (HashEntry[])result;
+                        else
+                            // TODO: Not the best solution... But I need to investigate further how to improve StackExchange.Redis
+                            // to get these values directly...
+                            entries = (HashEntry[])scanValues;
 
                         for (int i = 0; i < entries.Length; i++)
                         {
                             HashEntry source = entries[i];
                             byte[] valueBlob = source.Value;
                             RedisValueCompressor.Compressor.Decompress(ref valueBlob);
-                            result = new HashEntry(source.Name, (RedisValue)valueBlob);
+                            entries[i] = new HashEntry(source.Name, (RedisValue)valueBlob);
                         }
                     }
                 }

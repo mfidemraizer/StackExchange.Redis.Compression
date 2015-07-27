@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
 
     public abstract class RedisValueCompressor : IRedisValueCompressor
     {
@@ -11,11 +10,13 @@
         {
             KeyPatterns = new List<Func<string, bool>>();
             MinimumPlainSizeToCompress = 32;
+            CompressionEnabled = true;
         }
 
         public static int MinimumPlainSizeToCompress { get; set; }
         public static List<Func<string, bool>> KeyPatterns { get; set; }
         public static IRedisValueCompressor Compressor { get; set; }
+        public static bool CompressionEnabled { get; set; }
 
         public static bool UseDefaultCompressor
         {
@@ -34,7 +35,7 @@
 
         internal static bool KeyCanBeCompressed(RedisKey key)
         {
-            return KeyPatterns == null || KeyPatterns.Count == 0 || KeyPatterns.Any(pattern => pattern(key));
+            return CompressionEnabled && (KeyPatterns == null || KeyPatterns.Count == 0 || KeyPatterns.Any(pattern => pattern(key)));
         }
 
         public abstract void Compress(ref byte[] value);
