@@ -9,7 +9,6 @@
         static RedisValueCompressor()
         {
             KeyPatterns = new List<Func<string, bool>>();
-            MinimumPlainSizeToCompress = 32;
             CompressionEnabled = true;
         }
 

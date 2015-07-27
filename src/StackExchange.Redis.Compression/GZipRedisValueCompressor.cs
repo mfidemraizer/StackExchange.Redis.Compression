@@ -7,17 +7,18 @@
     {
         public override void Compress(ref byte[] value)
         {
-            using (MemoryStream outputStream = new MemoryStream())
-            {
-                using (MemoryStream inputStream = new MemoryStream(value))
-                using (GZipStream gzipStream = new GZipStream(outputStream, CompressionMode.Compress, true))
+            if (value != null && value.Length >= RedisValueCompressor.MinimumPlainSizeToCompress)
+                using (MemoryStream outputStream = new MemoryStream())
                 {
-                    inputStream.CopyTo(gzipStream);
-                    gzipStream.Close();
-                }
+                    using (MemoryStream inputStream = new MemoryStream(value))
+                    using (GZipStream gzipStream = new GZipStream(outputStream, CompressionMode.Compress, true))
+                    {
+                        inputStream.CopyTo(gzipStream);
+                        gzipStream.Close();
+                    }
 
-                value = outputStream.ToArray();
-            }
+                    value = outputStream.ToArray();
+                }
         }
 
         public override void Decompress(ref byte[] value)

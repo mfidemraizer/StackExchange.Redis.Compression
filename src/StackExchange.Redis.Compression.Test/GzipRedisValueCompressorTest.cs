@@ -17,7 +17,10 @@
 
             RedisValueCompressor.UseDefaultCompressor = true;
 
-            redisServer = Process.Start("redis-server.exe", "--port 8512 --maxheap 1g");
+            ProcessStartInfo redisProcInfo = new ProcessStartInfo("redis-server.exe", "--port 8512 --maxheap 1g");
+            redisProcInfo.CreateNoWindow = true;
+            redisProcInfo.UseShellExecute = false;
+            redisServer = Process.Start(redisProcInfo);
         }
 
         [ClassCleanup]
@@ -241,6 +244,7 @@
             const string testVal1 = "hello world";
             const string testVal2 = "goodbye";
 
+            RedisValueCompressor.MinimumPlainSizeToCompress = 0;
             RedisValueCompressor.KeyPatterns.Add(key => key.Contains("test"));
 
             IDatabase db = GetDatabase();
