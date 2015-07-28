@@ -2,7 +2,7 @@
 {
     public interface IRedisValueCompressor
     {
-        void Compress(ref byte[] valueBlob);
-        void Decompress(ref byte[] valueBlob);
+        bool Compress(ref byte[] valueBlob);
+        bool Decompress(ref byte[] valueBlob);
     }
 }

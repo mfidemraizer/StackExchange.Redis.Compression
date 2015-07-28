@@ -244,7 +244,7 @@
             const string testVal1 = "hello world";
             const string testVal2 = "goodbye";
 
-            RedisValueCompressor.MinimumPlainSizeToCompress = 0;
+            RedisValueCompressor.CompressionThreshold = 0;
             RedisValueCompressor.KeyPatterns.Add(key => key.Contains("test"));
 
             IDatabase db = GetDatabase();

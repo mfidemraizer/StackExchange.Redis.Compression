@@ -82,8 +82,11 @@
                     if (result.GetType() == typeof(RedisValue))
                     {
                         byte[] valueBlob = (RedisValue)result;
+
                         RedisValueCompressor.Compressor.Decompress(ref valueBlob);
-                        result = (RedisValue)Encoding.UTF8.GetString(valueBlob);
+
+                        if (valueBlob != null && valueBlob.Length > 0)
+                            result = (RedisValue)Encoding.UTF8.GetString(valueBlob);
                     }
                     else if (result.GetType() == typeof(RedisValue[]) || (command == RedisCommand.SCAN || command == RedisCommand.SSCAN))
                     {
@@ -98,7 +101,7 @@
                         {
                             byte[] valueBlob = values[i];
                             RedisValueCompressor.Compressor.Decompress(ref valueBlob);
-                            values[i] = valueBlob;
+                            values[i] = (RedisValue)valueBlob;
                         }
                     }
                     else if (result.GetType() == typeof(SortedSetEntry))
